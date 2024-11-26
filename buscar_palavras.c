@@ -170,12 +170,12 @@ void liberarSubstrings(char** substrings, int count) {
 }
 
 int main(int argc, char *argv[]) {
-
+    
     if (argc < 1) {
         fprintf(stderr, "Uso: %s <arquivo> <numero_de_threads>\n", argv[0]);
         return EXIT_FAILURE;
     }
-
+    
     int num_threads = atoi(argv[2]);
     if (num_threads <= 0) {
         fprintf(stderr, "Erro: número de threads inválido.\n");
@@ -235,7 +235,8 @@ int main(int argc, char *argv[]) {
         }
     }
     fclose(file1);
-    
+    double inicio, fim;
+    inicio = omp_get_wtime();
     int count = 0;
     char** substrings = extrairSubstrings(last_line, &count);
     for (int i = 0; i < count; i++) {
@@ -244,7 +245,9 @@ int main(int argc, char *argv[]) {
             printf("Palavra '%s' nao encontrada.\n", substrings[i]);
         }
     }
+    fim =omp_get_wtime();
     liberarSubstrings(substrings, count);
     free(grid);
+    printf("\nTempo: %d com %d threads", fim-inicio, num_threads);
     return 0;
 }
