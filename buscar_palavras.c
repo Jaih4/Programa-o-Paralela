@@ -16,9 +16,9 @@ char* inverterPalavra(const char* palavra) {
 }
 
 int buscarPalavraNaMatriz(char** grid, int rows, int cols, const char* palavra) {
+    cols--;
     int len = strlen(palavra);
     int found = 0;
-
     char* palavraInvertida = inverterPalavra(palavra);
 
     #pragma omp parallel sections
@@ -27,11 +27,11 @@ int buscarPalavraNaMatriz(char** grid, int rows, int cols, const char* palavra) 
         {
             //horizontal
             for (int i = 0; i < rows; i++) {
-                for (int j = 0; j < cols - len; j++) {
+                for (int j = 0; j < cols ; j++) {
                     int k;
                     for (k = 0; k < len; k++) {
                         if (j + k >= cols) {
-                            if (grid[i][(j + k - cols) % cols] != palavra[k] && grid[i][(j + k - cols) % cols] != palavraInvertida[k]) {
+                            if (grid[i][(j + k) % cols] != palavra[k] && grid[i][(j + k) % cols] != palavraInvertida[k]) {
                                 break;
                             }
                         } else {
@@ -43,7 +43,7 @@ int buscarPalavraNaMatriz(char** grid, int rows, int cols, const char* palavra) 
                     if (k == len) {
                         #pragma omp critical
                         {
-                            printf("Palavra '%s' encontrada na linha %d, comecando na coluna %d (horizontal)\n", palavra, i+1, j+1);
+                            printf("Palavra '%s' encontrada na linha %d, comecando na coluna %d (horizontal)\n", palavra, i + 1, j + 1);
                         }
                         found = 1;
                     }
@@ -54,12 +54,12 @@ int buscarPalavraNaMatriz(char** grid, int rows, int cols, const char* palavra) 
         #pragma omp section
         {
             // Vertical
-            for (int i = 0; i < rows - len; i++) {
+            for (int i = 0; i < rows; i++) {
                 for (int j = 0; j < cols; j++) {
                     int k;
                     for (k = 0; k < len; k++) {
                         if (i+k>=rows){
-                            if (grid[(i + k-rows)%rows][j] != palavra[k] && grid[(i + k-rows)%rows][j] != palavraInvertida[k]){
+                            if (grid[(i + k) % rows][j] != palavra[k] && grid[(i + k) % rows][j] != palavraInvertida[k]) {
                                 break;
                             }
                         }else{
@@ -82,10 +82,11 @@ int buscarPalavraNaMatriz(char** grid, int rows, int cols, const char* palavra) 
         #pragma omp section
         {
             // diagonal
-            for (int i = 0; i < rows - len; i++) {
-                for (int j = 0; j < cols - len; j++) {
+            for (int i = 0; i < rows-len; i++) {
+                for (int j = 0; j < cols-len; j++) {
                     int k;
                     for (k = 0; k < len; k++) {
+                        
                         if (grid[i + k][j + k] != palavra[k] && grid[i + k][j + k] != palavraInvertida[k]) {
                             break;
                         }
@@ -199,6 +200,7 @@ int main(int argc, char *argv[]) {
         }
 
         if (buffer[0] != '\n') {
+            removerEspacos(buffer);
             int len = strlen(buffer);
             if (len > cols) {
                 cols = len;
