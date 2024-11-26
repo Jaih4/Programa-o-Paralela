@@ -240,7 +240,7 @@ int main(int argc, char *argv[]) {
     int count = 0;
     char** substrings = extrairSubstrings(last_line, &count);
     for (int i = 0; i < count; i++) {
-        printf("Procurando pela palavra: %s\n", substrings[i]);
+        //printf("Procurando pela palavra: %s\n", substrings[i]);
         if (!buscarPalavraNaMatriz(grid, rows, cols, substrings[i])) {
             printf("Palavra '%s' nao encontrada.\n", substrings[i]);
         }
@@ -248,6 +248,6 @@ int main(int argc, char *argv[]) {
     fim =omp_get_wtime();
     liberarSubstrings(substrings, count);
     free(grid);
-    printf("\nTempo: %d com %d threads", fim-inicio, num_threads);
+    printf("\nTempo: %f com %d threads", fim-inicio, num_threads);
     return 0;
 }
